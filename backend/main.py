@@ -29,7 +29,7 @@ def root():
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
     contents = await file.read()
-
+ 
     # save to temp file
     with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
         tmp.write(contents)

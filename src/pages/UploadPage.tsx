@@ -40,7 +40,7 @@ function UploadPage() {
 
         {/* Upload Button */}
         <button
-          className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-3 rounded-lg transition-colors"
+          className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-3 rounded-lg transition-colors cursor-pointer "
           onClick={handleUpload}>
           Upload & Process
         </button>

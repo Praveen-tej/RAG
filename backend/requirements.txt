@@ -2,7 +2,6 @@ fastapi
 uvicorn
 python-multipart
 chromadb
-sentence-transformers
-groq
 python-dotenv
-unstructured[pdf]
+requests
+pypdf

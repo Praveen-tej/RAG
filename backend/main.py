@@ -1,11 +1,11 @@
 import os
+import io
 import requests
-import tempfile
 import chromadb
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from unstructured.partition.pdf import partition_pdf
+from pypdf import PdfReader
 
 load_dotenv()
 
@@ -29,23 +29,21 @@ def root():
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
     contents = await file.read()
- 
-    # save to temp file
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-        tmp.write(contents)
-        tmp_path = tmp.name
-
-    # parse PDF into text chunks
-    elements = partition_pdf(filename=tmp_path)
-    chunks = [str(e) for e in elements if str(e).strip()]
-
+    
+    # parse PDF directly from memory
+    pdf = PdfReader(io.BytesIO(contents))
+    chunks = []
+    for page in pdf.pages:
+        text = page.extract_text()
+        if text and text.strip():
+            chunks.append(text.strip())
+    
     # store in ChromaDB
     collection.add(
         documents=chunks,
         ids=[f"chunk_{i}" for i in range(len(chunks))]
     )
-
-    os.unlink(tmp_path)
+    
     print(f"Stored {len(chunks)} chunks in ChromaDB")
     return {"message": f"Processed {len(chunks)} chunks"}
 

@@ -8,7 +8,12 @@ interface Message {
 }
 
 function ChatPage() {
-  const [message, setMessage] = useState<Message[]>([]);
+  const [message, setMessage] = useState<Message[]>([
+    {
+      role:'ai',
+      content:  'Hello! I have read your document. Ask me anything about it!'
+    }
+  ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 

@@ -10,14 +10,17 @@ interface Message {
 function ChatPage() {
   const [message, setMessage] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSend = async () => {
     if (!input) return;
-    setMessage(prev => [...prev, { role: "user", content: input }]);
+    setMessage((prev) => [...prev, { role: "user", content: input }]);
     setInput("");
+    setIsLoading(true);
     const response = await sendMessage(input);
     console.log(response);
-    setMessage(prev => [...prev, { role: "ai", content: response.answer }]);
+    setMessage((prev) => [...prev, { role: "ai", content: response.answer }]);
+    setIsLoading(false);
   };
 
   return (
@@ -50,6 +53,16 @@ function ChatPage() {
             </div>
           </div>
         ))}
+        {isLoading && (
+          <div className="flex items-start gap-3 max-w-2xl">
+            <div className="w-8 h-8 rounded-full bg-violet-600 flex items-center justify-center text-white text-sm shrink-0">
+              AI
+            </div>
+            <div className="bg-white/5 border border-white/10 rounded-2xl rounded-tl-none px-4 py-3 text-gray-400">
+              Thinking...
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Input Area */}
@@ -61,6 +74,7 @@ function ChatPage() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
+
         <button
           className="bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 rounded-lg transition-colors"
           onClick={handleSend}
